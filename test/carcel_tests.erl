@@ -7,3 +7,12 @@ carcel_test() ->
     ?assert(not(carcel:can(Acl, ["erlang.net", blog]))),
     ?assert(carcel:can(Acl, ['_', article])),
     ?assert(carcel:can(Acl, ['_', article, '_', write])).
+
+carcel_check_test() ->
+    Acls = [
+        ["erlang.net", article, 42, write],
+        ["erlang.net", article, 43, write]
+    ],
+    ?assert(not(carcel:check(Acls, ["erlang.net", article, 44]))),
+    ?assert(carcel:check(Acls, ["erlang.net", article, 42])).
+

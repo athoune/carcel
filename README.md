@@ -24,6 +24,10 @@ Code
 true = carcel:can(["erlang.net", article, 42, write], ['_', article, '_', write]).
 ```
 
+`carcel:can` try to match an *action* with *acl*.
+
+`carcel:check` try to match an *action* with a list of *acls*.
+
 Licence
 -------
 
