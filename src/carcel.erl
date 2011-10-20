@@ -4,29 +4,14 @@
 
 -ifdef(TEST).
 -compile(export_all).
+-include_lib("eunit/include/eunit.hrl").
 -endif.
 
-can([Acl | Acls], [Action, Actions]) ->
-    case Acl of
-        Action -> can(Acls, Actions);
-             _ -> false
+can([Acl | Acls], [Action | Actions]) ->
+    if
+        (Acl == Action) or (Acl == '_') or (Action == '_') -> can(Acls, Actions);
+        true -> false
     end;
-
-can(Acl, [Action, _Actions]) ->
-    case Acl of
-        Action -> true;
-             _ -> false
-    end;
-
-can([Acl | _Acls], Action) ->
-    case Acl of
-        Action -> true;
-             _ -> false
-    end;
-
-can(Acl, Action) ->
-    case Acl of
-        Action -> true;
-             _ -> false
-    end.
+can(_, []) -> true;
+can([], _) -> true.
 
