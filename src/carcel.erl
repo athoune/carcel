@@ -3,8 +3,7 @@
 -export([can/2, can/3, check/2, check/3, sort/1, compact/1]).
 
 % Can I do this action with this acl?
-can(Acls, Actions) ->
-    raw_can(Acls, Actions).
+can(Acls, Actions) -> raw_can(Acls, Actions).
 can(Acls, Actions, Context) ->
     raw_can(dynamics(Acls, Context), dynamics(Actions, Context)).
 
@@ -23,8 +22,8 @@ dynamics(Values, Context) ->
     lists:map(fun(Value) -> dynamic(Value, Context) end, Values).
 
 % Is there any acl wich match this action?
-check(Acls, Action, Context) ->
-    check(dynamics(Acls, Context), Action).
+check(Acls, Action, Context) -> check(dynamics(Acls, Context), Action).
+
 check([Acl | Acls], Action) ->
     case can(Acl, Action) of
         false -> check(Acls, Action);

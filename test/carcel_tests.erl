@@ -36,4 +36,3 @@ dynamic_test() ->
     Acl = ["erlang.net", article, fun(Context) -> Context + 22 end, write],
     ?assert(carcel:can(Acl, ["erlang.net", article], 20)),
     ?assert(carcel:can(Acl, ["erlang.net", article, 42], 20)).
-
