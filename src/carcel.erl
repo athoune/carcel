@@ -1,6 +1,6 @@
 -module(carcel).
 
--export([can/2, check/2]).
+-export([can/2, check/2, sort/1]).
 
 % Can I do this action with this acl?
 can([Acl | Acls], [Action | Actions]) ->
@@ -19,3 +19,9 @@ check([Acl | Acls], Action) ->
     end;
 check([], _Action) ->
     false.
+
+% Sort ACLs to try to catch something soon.
+sort(Acls) ->
+    lists:sort(fun(A, B) ->
+        length(A) < length(B)
+    end, Acls).

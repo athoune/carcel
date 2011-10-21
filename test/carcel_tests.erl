@@ -16,3 +16,11 @@ carcel_check_test() ->
     ?assert(not(carcel:check(Acls, ["erlang.net", article, 44]))),
     ?assert(carcel:check(Acls, ["erlang.net", article, 42])).
 
+sort_test() ->
+    Acls = [
+        ["erlang.net", article, 42, write],
+        ["erlang.net", comment, '_', moderate],
+        ["erlang.net", stats]
+    ],
+    ?debugFmt("~w~n", [carcel:sort(Acls)]).
+ 
