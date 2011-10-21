@@ -1,17 +1,30 @@
 -module(carcel).
 
--export([can/2, check/2, sort/1, compact/1]).
+-export([can/2, can/3, check/2, check/3, sort/1, compact/1]).
 
 % Can I do this action with this acl?
-can([Acl | Acls], [Action | Actions]) ->
+can(Acls, Actions) ->
+    raw_can(Acls, Actions).
+can(Acls, Actions, Context) ->
+    raw_can(dynamics(Acls, Context), dynamics(Actions, Context)).
+
+raw_can([Acl | Acls], [Action | Actions]) ->
     if
-        (Acl == Action) or (Acl == '_') or (Action == '_') -> can(Acls, Actions);
+        (Acl == Action) or (Acl == '_') or (Action == '_') -> raw_can(Acls, Actions);
         true -> false
     end;
-can(_, []) -> true;
-can([], _) -> true.
+raw_can(_, []) -> true;
+raw_can([], _) -> true.
+
+dynamic(Value, Context) when is_function(Value) -> Value(Context);
+dynamic(Value, _) -> Value.
+
+dynamics(Values, Context) ->
+    lists:map(fun(Value) -> dynamic(Value, Context) end, Values).
 
 % Is there any acl wich match this action?
+check(Acls, Action, Context) ->
+    check(dynamics(Acls, Context), Action).
 check([Acl | Acls], Action) ->
     case can(Acl, Action) of
         false -> check(Acls, Action);
