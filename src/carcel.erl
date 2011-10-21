@@ -2,11 +2,6 @@
 
 -export([can/2, check/2]).
 
--ifdef(TEST).
--compile(export_all).
--include_lib("eunit/include/eunit.hrl").
--endif.
-
 % Can I do this action with this acl?
 can([Acl | Acls], [Action | Actions]) ->
     if
