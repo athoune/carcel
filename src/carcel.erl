@@ -45,7 +45,6 @@ compact(Acls) ->
         (Elem, {P, Acc}) ->
             case can(Elem, P) of
                 true  ->
-                    io:format("~w > ~w~n", [P, Elem]),
                     Acc2 = case lists:last(Acc)  of
                         P -> Acc;
                         _ -> Acc ++ [P]
