@@ -22,5 +22,5 @@ sort_test() ->
         ["erlang.net", comment, '_', moderate],
         ["erlang.net", stats]
     ],
-    ?debugFmt("~w~n", [carcel:sort(Acls)]).
- 
+    ?assertEqual( ["erlang.net", stats], lists:nth(1, carcel:sort(Acls))).
+
