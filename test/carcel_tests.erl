@@ -24,3 +24,11 @@ sort_test() ->
     ],
     ?assertEqual( ["erlang.net", stats], lists:nth(1, carcel:sort(Acls))).
 
+compact_test() ->
+    Acls = [
+        ["erlang.net", article, 42, write],
+        ["erlang.net", article],
+        ["erlang.net", stats]
+    ],
+    ?assert(not(lists:member(["erlang.net", article, 42, write], carcel:compact(Acls)))).
+
