@@ -2,19 +2,21 @@
 -include_lib("eunit/include/eunit.hrl").
 
 carcel_test() ->
-    Acl = ["erlang.net", article, 42, write],
-    ?assert(carcel:can(Acl, ["erlang.net", article])),
-    ?assert(not(carcel:can(Acl, ["erlang.net", blog]))),
-    ?assert(carcel:can(Acl, ['_', article])),
-    ?assert(carcel:can(Acl, ['_', article, '_', write])).
+    Writer = ["erlang.net", article, 42, write],
+    Editor = ["erlang.net", article],
+    ?assert(not(carcel:can(Writer, ["erlang.net", article]))),
+    ?assert(carcel:can(Editor, ["erlang.net", article])),
+    ?assert(not(carcel:can(Editor, ["erlang.net", blog]))),
+    ?assert(carcel:can(Editor, ['_', article])),
+    ?assert(carcel:can(Writer, ['_', article, '_', write])).
 
 carcel_check_test() ->
     Acls = [
         ["erlang.net", article, 42, write],
         ["erlang.net", article, 43, write]
     ],
-    ?assert(not(carcel:check(Acls, ["erlang.net", article, 44]))),
-    ?assert(carcel:check(Acls, ["erlang.net", article, 42])).
+    ?assert(not(carcel:check(Acls, ["erlang.net", article, 44, write]))),
+    ?assert(carcel:check(Acls, ["erlang.net", article, 42, write])).
 
 sort_test() ->
     Acls = [
@@ -34,5 +36,5 @@ compact_test() ->
 
 dynamic_test() ->
     Acl = ["erlang.net", article, fun(Context) -> Context + 22 end, write],
-    ?assert(carcel:can(Acl, ["erlang.net", article], 20)),
-    ?assert(carcel:can(Acl, ["erlang.net", article, 42], 20)).
+    ?assert(carcel:can(Acl, ["erlang.net", article, 42, write], 20)),
+    ?assert(not(carcel:can(Acl, ["erlang.net", article, 42, write], 19))).

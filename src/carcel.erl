@@ -9,6 +9,7 @@ can(Acls, Actions, Context) ->
 
 raw_can([Acl | Acls], [Action | Actions]) ->
     if
+        length(Actions) < length(Acls) -> false;% Acl is more specific than the action
         (Acl == Action) or (Acl == '_') or (Action == '_') -> raw_can(Acls, Actions);
         true -> false
     end;
