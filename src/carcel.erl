@@ -10,8 +10,13 @@ can(Acls, Actions, Context) ->
 raw_can([Acl | Acls], [Action | Actions]) ->
     if
         length(Actions) < length(Acls) -> false;% Acl is more specific than the action
-        is_list(Action) or is_list(Acl) -> list_compare(Acl, Action);
-        (Acl == Action) or (Acl == '_') or (Action == '_') -> raw_can(Acls, Actions);
+        (Acl == '_') or (Action == '_') -> raw_can(Acls, Actions);
+        is_list(Action) or is_list(Acl) ->
+            case list_compare(Acl, Action) of
+                true -> raw_can(Acls, Actions);
+                false -> false
+            end;
+        Acl == Action -> raw_can(Acls, Actions);
         true -> false
     end;
 raw_can(_, []) -> true;
