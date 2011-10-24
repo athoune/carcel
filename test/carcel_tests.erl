@@ -38,3 +38,11 @@ dynamic_test() ->
     Acl = ["erlang.net", article, fun(Context) -> Context + 22 end, write],
     ?assert(carcel:can(Acl, ["erlang.net", article, 42, write], 20)),
     ?assert(not(carcel:can(Acl, ["erlang.net", article, 42, write], 19))).
+
+relation_test() ->
+    Relation = fun([_User, _Object]) -> owner end,% Just a mock
+    User = robert,
+    Object = article,
+    Acl = ["erlang.net", article, '_', write, owner],
+    ?assert(carcel:can(Acl, ["erlang.net", article, 42, write, Relation], [User, Object])).
+
