@@ -10,6 +10,7 @@ can(Acls, Actions, Context) ->
 raw_can([Acl | Acls], [Action | Actions]) ->
     if
         length(Actions) < length(Acls) -> false;% Acl is more specific than the action
+        is_list(Action) or is_list(Acl) -> list_compare(Acl, Action);
         (Acl == Action) or (Acl == '_') or (Action == '_') -> raw_can(Acls, Actions);
         true -> false
     end;
@@ -21,6 +22,20 @@ dynamic(Value, _) -> Value.
 
 dynamics(Values, Context) ->
     lists:map(fun(Value) -> dynamic(Value, Context) end, Values).
+
+list_compare([Acl | Acls], Action) ->
+    if
+        Acl == Action -> true;
+        true -> list_compare(Acls, Action)
+    end;
+list_compare([], _Action) -> false;
+list_compare(Acl, [Action | Actions]) ->
+    if
+        Acl == Action -> true;
+        true -> list_compare(Acl, Actions)
+    end;
+list_compare(_Acl, []) -> false.
+% TODO list_compare([Acl | Acls], [Action | Actions]) ->
 
 % Is there any acl wich match this action?
 check(Acls, Action, Context) -> check(dynamics(Acls, Context), Action).
@@ -56,3 +71,14 @@ compact(Acls) ->
         end,
     {nil, []},sort(Acls)),
     Compacted.
+
+-ifdef(TEST).
+-include_lib("eunit/include/eunit.hrl").
+
+    list_compare_test() ->
+        ?assert(list_compare([a, b, c, d], a)),
+        ?assert(list_compare(b, [a, b, c, d])),
+        ?assert(not(list_compare([a, b, c, d], e))),
+        ?assert(not(list_compare(e, [a, b, c, d]))).
+
+-endif.

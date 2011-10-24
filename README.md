@@ -9,14 +9,17 @@ Concept borowed from the Alcatraz ruby project.
 
 CarCel provides a matcher between ACL and action. Each are path like : a list of arbitrary values.
 
-A simple example : for the site erlang.net, I can write the article 42 : `["erlang.net", article, 42, write]`.
+A simple example : for the site erlang.net, I can write the article 42 : `[<<"erlang.net">>, article, 42, write]`.
 
-You can use `'_'` as a joker. A corrector may have `['_', article, '_', write]` for spellchecking every articles.
 
-Each path elements can be any type and *function* can be evaluated before comparing if you provide a *Context*.
+Each path elements can be any type but :
+
+ * *function* can be evaluated before comparing if you provide a *Context*.
+ * *list* is iterated. For now *list* can't be compared with an other list. `[a, b, c]` match with `a`, `b` or `c`.
+ * `'_'` is a joker. A corrector may have `['_', article, '_', write]` for spellchecking every articles.
 
 If Acl is longer than the action, it always fails, it is too specific. Short Acl means great power:
-an editor in chief may have `["erlange.net", article]` and be able to do what he wonts with every articles.
+an editor in chief may have `[<<"erlange.net">>, article]` and be able to do what he wonts with every articles.
 
 ### Roles
 
@@ -31,7 +34,7 @@ It may be boring to explicit each specific right of a user. If an *article* has 
 You may use this Acl :
 
 ```erlang
-Writer = [["erlang.net", article, '_', write, owner], ["erlang.net", article, '_', delete, owner]].
+Writer = [[<<"erlang.net">>, article, '_', write, owner], [<<"erlang.net">>, article, '_', delete, owner]].
 ```
 
 If I own this article, I can write it or delete it. The relation between the object and the user is beyond the scope of Acls management.
@@ -45,7 +48,7 @@ Carcel provides no persistance, just Acl/action checking. You have to store some
 ## Code
 
 ```erlang
-true = carcel:can(["erlang.net", article, 42, write], ['_', article, '_', write]).
+true = carcel:can([<<"erlang.net">>, article, 42, write], ['_', article, '_', write]).
 ```
 
 `carcel:can` try to match an *action* with *acl*.
