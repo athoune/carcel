@@ -19,7 +19,7 @@ Each path elements can be any type but :
  * `'_'` is a joker. A corrector may have `['_', article, '_', write]` for spellchecking every articles.
 
 If Acl is longer than the action, it always fails, it is too specific. Short Acl means great power:
-an editor in chief may have `[<<"erlange.net">>, article]` and be able to do what he wonts with every articles.
+an editor in chief may have `[<<"erlang.net">>, article]` and be able to do what he wonts with every articles.
 
 ### Roles
 
