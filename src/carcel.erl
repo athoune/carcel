@@ -51,6 +51,7 @@ sort(Acls) ->
     end, Acls).
 
 % Remove ACL wrapped by a stronger one
+% TODO handling list
 compact(Acls) ->
     {_, Compacted} = lists:foldl(
         fun(Elem, {nil, []}) -> {Elem, []};
