@@ -46,8 +46,10 @@ dynamic_test() ->
 
 relation_test() ->
     Relation = fun([_User, _Object]) -> [owner] end,% Just a mock
-    User = robert,
+    User   = robert,
     Object = article,
-    Acl = [<<"erlang.net">>, article, '_', write, owner],
-    ?assert(carcel:can(Acl, [<<"erlang.net">>, article, 42, write, Relation], [User, Object])).
-
+    Acl1    = [<<"erlang.net">>, article, '_', write, Relation], % Can write any article wich I own
+    Action = [<<"erlang.net">>, article, 42, write, owner],
+    ?assert(carcel:can(Acl1, Action, [User, Object])),
+    Acl2    = [<<"erlang.net">>, article, 42, write], % Can write article 42
+    ?assert(carcel:can(Acl2, Action, [User, Object])).

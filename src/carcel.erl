@@ -7,20 +7,18 @@ can(Acls, Actions) -> raw_can(Acls, Actions).
 can(Acls, Actions, Context) ->
     raw_can(dynamics(Acls, Context), dynamics(Actions, Context)).
 
-raw_can([Acl | Acls], [Action | Actions]) ->
-    if
-        length(Actions) < length(Acls) -> false;% Acl is more specific than the action
-        (Acl == '_') or (Action == '_') -> raw_can(Acls, Actions);
-        is_list(Action) or is_list(Acl) ->
-            case list_compare(Acl, Action) of
-                true -> raw_can(Acls, Actions);
-                false -> false
-            end;
-        Acl == Action -> raw_can(Acls, Actions);
-        true -> false
+raw_can(Acls, Actions) when length(Actions) < length(Acls) -> false;% Acl is more specific than the action
+raw_can(['_' | Acls], [_Action | Actions]) -> raw_can(Acls, Actions);
+raw_can([_Acl| Acls], ['_' | Actions]) -> raw_can(Acls, Actions);
+raw_can([Acl | Acls], [Action | Actions]) when  is_list(Action) or is_list(Acl) ->
+    case list_compare(Acl, Action) of
+        true -> raw_can(Acls, Actions);
+        false -> false
     end;
+raw_can([A | Acls], [A | Actions]) -> raw_can(Acls, Actions);
 raw_can(_, []) -> true;
-raw_can([], _) -> true.
+raw_can([], _) -> true;
+raw_can(_, _) -> false.
 
 dynamic(Value, Context) when is_function(Value) -> Value(Context);
 dynamic(Value, _) -> Value.
@@ -28,17 +26,11 @@ dynamic(Value, _) -> Value.
 dynamics(Values, Context) ->
     lists:map(fun(Value) -> dynamic(Value, Context) end, Values).
 
-list_compare([Acl | Acls], Action) ->
-    if
-        Acl == Action -> true;
-        true -> list_compare(Acls, Action)
-    end;
+list_compare([A | _Acls], A) -> true;
+list_compare([_Acl | Acls], Action) -> list_compare(Acls, Action);
 list_compare([], _Action) -> false;
-list_compare(Acl, [Action | Actions]) ->
-    if
-        Acl == Action -> true;
-        true -> list_compare(Acl, Actions)
-    end;
+list_compare(A, [A | _Actions]) -> true;
+list_compare(Acl, [_Action | Actions]) -> list_compare(Acl, Actions);
 list_compare(_Acl, []) -> false.
 % TODO list_compare([Acl | Acls], [Action | Actions]) ->
 
@@ -50,8 +42,7 @@ check([Acl | Acls], Action) ->
         false -> check(Acls, Action);
         T -> T
     end;
-check([], _Action) ->
-    false.
+check([], _Action) -> false.
 
 % Sort ACLs to try to catch something soon.
 sort(Acls) ->
